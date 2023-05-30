@@ -77,7 +77,7 @@ fun AddTermScreen(
                     scope.launch {
                         snackbarHostState
                             .showSnackbar("Added Note Successfully")
-                        addTermViewModel?.resetTermAddedStatus()
+                        addTermViewModel?.resetState()
                         onNavigate.invoke()
                     }
                 }

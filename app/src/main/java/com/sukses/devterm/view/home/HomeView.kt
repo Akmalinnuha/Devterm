@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.Timestamp
 import com.sukses.devterm.model.Terms
 import com.sukses.devterm.navigation.HomeRoutes
 import com.sukses.devterm.repository.Resources
@@ -66,18 +67,18 @@ fun HomeScreen(
 
     val aka: List<Terms>
     val exampleTerms = listOf<Terms>(
-        Terms("123","HTML", "Web", "The Description"),
-        Terms("123","API","Programming", "The Description"),
-        Terms("123","CPU","The Description"),
-        Terms("123","XSS", "Cyber Security", "The Description")
+        Terms("123","HTML", "Web", "The Description", Timestamp(30, 23), "fur"),
+        Terms("123","API","Programming", "The Description", Timestamp(21, 12), "fur"),
+        Terms("123","CPU","Hardware", "The Description", Timestamp(34, 45), "fur"),
+        Terms("123","XSS", "Cyber Security", "The Description", Timestamp(39,65), "fur")
     )
 
-    LaunchedEffect(homeViewModel?.loadTerms()) {
+    LaunchedEffect(key1 = homeViewModel?.loadTerms()) {
         homeViewModel?.loadTerms()
     }
     aka = when (homeUiState.termsList) {
         is Resources.Success -> {
-            homeUiState.termsList.data!!
+            homeUiState.termsList.data ?: emptyList()
         }
         else -> {
             exampleTerms
