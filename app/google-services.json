@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "902657132683",
+    "project_id": "devterm-sukses",
+    "storage_bucket": "devterm-sukses.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902657132683:android:56f1db9350f7bca3f92c8e",
+        "android_client_info": {
+          "package_name": "com.sukses.devterm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0Jgi35n7d4NXNNqWqy3TPNwRGfrwjg78"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
