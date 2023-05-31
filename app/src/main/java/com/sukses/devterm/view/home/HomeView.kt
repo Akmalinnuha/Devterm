@@ -57,7 +57,8 @@ import com.sukses.devterm.repository.Resources
 @Composable
 fun HomeScreen(
     navController: NavController,
-    homeViewModel: HomeViewModel?
+    homeViewModel: HomeViewModel?,
+    navToLoginPage: () -> Unit
 ) {
     val homeUiState = homeViewModel?.homeUiState ?: HomeUiState()
 
@@ -90,12 +91,63 @@ fun HomeScreen(
                 Column(modifier = Modifier.padding(16.dp)) {
                     SimpleTextField()
                 }
-                Demo_DropDownMenu(navController = navController)
+                val context = LocalContext.current
+                var expanded by remember { mutableStateOf(false) }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    Alignment.TopEnd
+                ) {
+                    IconButton(
+                        modifier = Modifier.padding(top = 5.dp),
+                        onClick = { expanded = !expanded }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "More",
+                            Modifier.size(30.dp)
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("My terms") },
+                            onClick = { Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show() }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Add term") },
+                            onClick = { navController.navigate(route = HomeRoutes.AddTerm.name) }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("View Categories") },
+                            onClick = { Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show() }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Profile page") },
+                            onClick = { Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show() }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("About us") },
+                            onClick = { Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show() }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Sign Out") },
+                            onClick = {
+                                homeViewModel?.signOut()
+                                navToLoginPage.invoke()
+                            }
+                        )
+                    }
+                }
             }
 
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(16.dp)
+                contentPadding = PaddingValues(6.dp)
             ) {
                 items (aka) {term ->
                     TermCard(
@@ -158,7 +210,7 @@ fun SimpleTextField() {
 }
 
 @Composable
-fun Demo_DropDownMenu(navController: NavController) {
+fun Demo_DropDownMenu() {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
 
@@ -188,7 +240,7 @@ fun Demo_DropDownMenu(navController: NavController) {
             )
             DropdownMenuItem(
                 text = { Text("Add term") },
-                onClick = { navController.navigate(route = HomeRoutes.AddTerm.name) }
+                onClick = { Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show() }
             )
             DropdownMenuItem(
                 text = { Text("View Categories") },

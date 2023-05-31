@@ -40,8 +40,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTermScreen(
-    addTermViewModel: AddTermViewModel?,
-    onNavigate: () -> Unit
+    addTermViewModel: AddTermViewModel?
 ) {
     val addTermUiState = addTermViewModel?.addTermUiState ?: AddTermUiState()
 
@@ -78,7 +77,6 @@ fun AddTermScreen(
                         snackbarHostState
                             .showSnackbar("Added Note Successfully")
                         addTermViewModel?.resetState()
-                        onNavigate.invoke()
                     }
                 }
             }
