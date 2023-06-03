@@ -21,8 +21,10 @@ import com.google.firebase.ktx.Firebase
 import com.sukses.devterm.navigation.Navigation
 import com.sukses.devterm.ui.theme.DevTermTheme
 import com.sukses.devterm.view.addterm.AddTermViewModel
+import com.sukses.devterm.view.editterm.EditTermViewModel
 import com.sukses.devterm.view.home.HomeViewModel
 import com.sukses.devterm.view.login.LoginViewModel
+import com.sukses.devterm.view.myterm.MyTermViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +33,8 @@ class MainActivity : ComponentActivity() {
             val loginViewModel = viewModel(modelClass = LoginViewModel::class.java)
             val addTermViewModel = viewModel(modelClass = AddTermViewModel::class.java)
             val homeViewModel = viewModel(modelClass = HomeViewModel::class.java)
+            val myTermViewModel = viewModel(modelClass = MyTermViewModel::class.java)
+            val editTermViewModel = viewModel(modelClass = EditTermViewModel::class.java)
             DevTermTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -40,7 +44,9 @@ class MainActivity : ComponentActivity() {
                     Navigation(
                         loginViewModel = loginViewModel,
                         addTermViewModel = addTermViewModel,
-                        homeViewModel = homeViewModel
+                        homeViewModel = homeViewModel,
+                        myTermViewModel = myTermViewModel,
+                        editTermViewModel = editTermViewModel
                     )
                 }
             }

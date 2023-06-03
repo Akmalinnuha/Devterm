@@ -116,7 +116,7 @@ fun HomeScreen(
                     ) {
                         DropdownMenuItem(
                             text = { Text("My terms") },
-                            onClick = { Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show() }
+                            onClick = { navController.navigate(route = HomeRoutes.MyTerm.name) }
                         )
                         DropdownMenuItem(
                             text = { Text("Add term") },

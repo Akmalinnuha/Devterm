@@ -7,11 +7,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sukses.devterm.view.addterm.AddTermScreen
 import com.sukses.devterm.view.addterm.AddTermViewModel
+import com.sukses.devterm.view.editterm.EditTermScreen
+import com.sukses.devterm.view.editterm.EditTermViewModel
 import com.sukses.devterm.view.home.HomeScreen
 import com.sukses.devterm.view.home.HomeViewModel
 import com.sukses.devterm.view.login.LoginViewModel
 import com.sukses.devterm.view.login.LoginScreen
 import com.sukses.devterm.view.login.SignUpScreen
+import com.sukses.devterm.view.myterm.MyTermScreen
+import com.sukses.devterm.view.myterm.MyTermViewModel
 
 enum class LoginRoutes {
     Signup,
@@ -20,7 +24,9 @@ enum class LoginRoutes {
 
 enum class HomeRoutes {
     Home,
-    AddTerm
+    AddTerm,
+    MyTerm,
+    EditTerm
 }
 
 enum class NestedRoutes {
@@ -33,17 +39,21 @@ fun Navigation(
     navController: NavHostController = rememberNavController(),
     loginViewModel: LoginViewModel,
     addTermViewModel: AddTermViewModel,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    myTermViewModel: MyTermViewModel,
+    editTermViewModel: EditTermViewModel
 ) {
     NavHost(
         navController = navController,
-        startDestination = NestedRoutes.Main.name
+        startDestination = NestedRoutes.Login.name
     ) {
         authGraph(navController, loginViewModel)
         homeGraph(
             navController = navController,
             addTermViewModel,
-            homeViewModel
+            homeViewModel,
+            myTermViewModel,
+            editTermViewModel
         )
     }
 }
@@ -96,7 +106,9 @@ fun NavGraphBuilder.authGraph(
 fun NavGraphBuilder.homeGraph(
     navController: NavHostController,
     addTermViewModel: AddTermViewModel,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    myTermViewModel: MyTermViewModel,
+    editTermViewModel: EditTermViewModel
 ){
     navigation(
         startDestination = HomeRoutes.Home.name,
@@ -121,6 +133,29 @@ fun NavGraphBuilder.homeGraph(
         ){
             AddTermScreen(
                 addTermViewModel = addTermViewModel
+            )
+        }
+        composable(route = HomeRoutes.MyTerm.name) {
+            MyTermScreen(
+                onTermClick = {termId ->
+                    navController.navigate(HomeRoutes.EditTerm.name + "?id=$termId") {
+                        launchSingleTop = true
+                    }
+                }, myTermViewModel = myTermViewModel
+            )
+        }
+
+        composable(
+            route = HomeRoutes.EditTerm.name + "?id={id}",
+            arguments = listOf(navArgument("id"){
+                type = NavType.StringType
+                defaultValue = ""
+            })
+        ){ entry ->
+
+            EditTermScreen(
+                editTermViewModel = editTermViewModel,
+                termId = entry.arguments?.getString("id") as String,
             )
         }
     }

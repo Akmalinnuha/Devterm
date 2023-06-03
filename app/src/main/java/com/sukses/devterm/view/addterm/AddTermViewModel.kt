@@ -47,23 +47,6 @@ class AddTermViewModel(
         }
     }
 
-    fun setEditFields(term: Terms){
-        addTermUiState = addTermUiState.copy(
-            title = term.title,
-            desc = term.description
-        )
-    }
-
-    fun getNote(termId:String){
-        repository.getTerm(
-            termId = termId,
-            onError = {},
-        ){
-            addTermUiState = addTermUiState.copy(selectedNote = it)
-            addTermUiState.selectedNote?.let { it1 -> setEditFields(it1) }
-        }
-    }
-
     fun resetTermAddedStatus(){
         addTermUiState = addTermUiState.copy(
             termAddedStatus = false,

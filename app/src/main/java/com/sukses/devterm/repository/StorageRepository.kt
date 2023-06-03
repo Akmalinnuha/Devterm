@@ -106,16 +106,16 @@ class StorageRepository {
         title: String,
         category: String,
         desc:String,
-        noteId: String,
+        termId: String,
         onResult:(Boolean) -> Unit
     ){
         val updateData = hashMapOf<String,Any>(
-            "description" to desc,
             "title" to title,
-            "category" to category
+            "category" to category,
+            "description" to desc
         )
 
-        termsRef.document(noteId)
+        termsRef.document(termId)
             .update(updateData)
             .addOnCompleteListener {
                 onResult(it.isSuccessful)

@@ -1,20 +1,19 @@
-package com.sukses.devterm.view.home
+package com.sukses.devterm.view.myterm
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseUser
 import com.sukses.devterm.model.Terms
 import com.sukses.devterm.repository.Resources
 import com.sukses.devterm.repository.StorageRepository
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class MyTermViewModel(
     private val repository: StorageRepository = StorageRepository()
 ) : ViewModel() {
-    var homeUiState by mutableStateOf(HomeUiState())
+    var myTermUiState by mutableStateOf(MyTermUiState())
         private set
 
     private val hasUser: Boolean
@@ -23,13 +22,13 @@ class HomeViewModel(
     private val userId: String
         get() = repository.getUserId()
 
-    fun loadTerms(){
+    fun loadMyTerms(){
         if (hasUser){
             if (userId.isNotBlank()){
                 getTermNotes(userId)
             }
         } else {
-            homeUiState = homeUiState.copy(termsList = Resources.Error(
+            myTermUiState = myTermUiState.copy(myTermsList = Resources.Error(
                 throwable = Throwable(message = "User is not Login")
             ))
         }
@@ -37,13 +36,16 @@ class HomeViewModel(
 
     private fun getTermNotes(userId : String) = viewModelScope.launch {
         repository.getUserTerms(userId).collect {
-            homeUiState = homeUiState.copy(termsList = it)
+            myTermUiState = myTermUiState.copy(myTermsList = it)
         }
     }
 
-    fun signOut() = repository.signOut()
+    fun deleteTerm(termId:String) = repository.deleteNote(termId){
+        myTermUiState = myTermUiState.copy(myTermsDeletedStatus = it)
+    }
 }
 
-data class HomeUiState(
-    val termsList: Resources<List<Terms>> = Resources.Loading()
+data class MyTermUiState(
+    val myTermsList: Resources<List<Terms>> = Resources.Loading(),
+    val myTermsDeletedStatus: Boolean = false,
 )

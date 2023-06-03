@@ -209,8 +209,9 @@ fun SignUpScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
         ) {
-            Text(text = "Already have an Account?")
-            Spacer(modifier = Modifier.size(8.dp))
+            Box(modifier = Modifier.padding(vertical = 12.dp, horizontal = 6.dp)) {
+                Text(text = "Already have an Account?")
+            }
             TextButton(onClick = { onNavToLoginPage.invoke() }) {
                 Text(text = "Sign In")
             }
@@ -229,7 +230,7 @@ fun SignUpScreen(
     }
 }
 
-@Preview(showSystemUi = true)
+//@Preview(showSystemUi = true)
 @Composable
 fun PrevLoginScreen() {
     DevTermTheme {
@@ -239,6 +240,7 @@ fun PrevLoginScreen() {
     }
 }
 
+@Preview(showSystemUi = true)
 @Composable
 fun PrevSignUpScreen() {
     DevTermTheme {
