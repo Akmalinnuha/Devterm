@@ -17,26 +17,12 @@ class HomeViewModel(
     var homeUiState by mutableStateOf(HomeUiState())
         private set
 
-    private val hasUser: Boolean
-        get() = repository.hasUser()
-
-    private val userId: String
-        get() = repository.getUserId()
-
     fun loadTerms(){
-        if (hasUser){
-            if (userId.isNotBlank()){
-                getTermNotes(userId)
-            }
-        } else {
-            homeUiState = homeUiState.copy(termsList = Resources.Error(
-                throwable = Throwable(message = "User is not Login")
-            ))
-        }
+        getAllTerms()
     }
 
-    private fun getTermNotes(userId : String) = viewModelScope.launch {
-        repository.getUserTerms(userId).collect {
+    private fun getAllTerms() = viewModelScope.launch {
+        repository.getAllTerm().collect {
             homeUiState = homeUiState.copy(termsList = it)
         }
     }
