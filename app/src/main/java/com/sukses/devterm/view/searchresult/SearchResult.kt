@@ -1,9 +1,11 @@
 package com.sukses.devterm.view.searchresult
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sukses.devterm.model.Terms
 import com.sukses.devterm.repository.Resources
 import com.sukses.devterm.view.home.HomeViewModel
 import com.sukses.devterm.view.home.SearchResultState
@@ -30,6 +33,13 @@ fun SearchResult(homeViewModel: HomeViewModel?) {
 
     Surface {
         Column {
+            if (searchResultState.searchTerms.data == emptyList<Terms>()) {
+                if (homeViewModel != null) {
+                    Box(modifier = Modifier.padding(16.dp)) {
+                        Text(text = "Hasil pencarian \"${homeViewModel.getSearch()}\" tidak ditemukan")
+                    }
+                }
+            }
             when (searchResultState.searchTerms) {
                 is Resources.Loading -> {
                     CircularProgressIndicator(

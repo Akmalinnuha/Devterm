@@ -230,7 +230,7 @@ fun SignUpScreen(
     }
 }
 
-//@Preview(showSystemUi = true)
+@Preview(showSystemUi = true)
 @Composable
 fun PrevLoginScreen() {
     DevTermTheme {

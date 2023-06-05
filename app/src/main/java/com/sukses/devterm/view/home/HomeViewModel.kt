@@ -5,11 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseUser
 import com.sukses.devterm.model.Terms
 import com.sukses.devterm.repository.Resources
 import com.sukses.devterm.repository.StorageRepository
-import com.sukses.devterm.view.addterm.AddTermUiState
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -21,7 +19,7 @@ class HomeViewModel(
     var searchResultState by mutableStateOf(SearchResultState())
         private set
 
-    var searchText by mutableStateOf<String>("")
+    var searchText by mutableStateOf("")
         private set
 
     fun loadTerms(){
@@ -36,6 +34,10 @@ class HomeViewModel(
         searchText = search
     }
 
+    fun getSearch():String {
+        return searchText
+    }
+
     private fun getAllTerms() = viewModelScope.launch {
         repository.getAllTerm().collect {
             homeUiState = homeUiState.copy(termsList = it)
@@ -47,10 +49,6 @@ class HomeViewModel(
             searchResultState = searchResultState.copy(searchTerms = it)
         }
     }
-
-//    fun reset(){
-//        homeUiState = HomeUiState()
-//    }
 
     fun signOut() = repository.signOut()
 }
