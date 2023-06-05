@@ -69,10 +69,10 @@ fun MyTermScreen(
     }
     
     Surface() {
-        Box(modifier = Modifier.padding(8.dp)) {
-            Text(text = "My Terms")
-        }
         Column(modifier = Modifier.padding(8.dp)) {
+            Box(modifier = Modifier.padding(12.dp)) {
+                Text(text = "My Terms")
+            }
             when (myTermUiState.myTermsList) {
                 is Resources.Loading -> {
                     CircularProgressIndicator(

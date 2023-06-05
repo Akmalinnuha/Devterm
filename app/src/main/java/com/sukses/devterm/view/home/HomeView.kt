@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -62,6 +63,8 @@ fun HomeScreen(
 ) {
     val homeUiState = homeViewModel?.homeUiState ?: HomeUiState()
 
+    val TextSearch = homeViewModel?.searchText
+
     val scope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -89,7 +92,30 @@ fun HomeScreen(
         Column() {
             Row {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    SimpleTextField()
+                    if (TextSearch != null) {
+                        OutlinedTextField(
+                            value = TextSearch,
+                            onValueChange = {
+                                homeViewModel.onSearchChange(it)
+                            },
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = {
+                                        navController.navigate(route = HomeRoutes.SearchResult.name)
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = "Search"
+                                    )
+                                }
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                            label = { Text(text = "Keyword") },
+                            placeholder = { Text(text = "HTML") }
+                        )
+                    }
                 }
                 val context = LocalContext.current
                 var expanded by remember { mutableStateOf(false) }
@@ -195,21 +221,6 @@ fun TermCard(name: String, category: String, description: String) {
 }
 
 @Composable
-fun SimpleTextField() {
-    var text by remember { mutableStateOf(TextFieldValue("")) }
-    OutlinedTextField(
-        value = text,
-        onValueChange = {
-            text = it
-        },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        label = { Text(text = "Keyword") },
-        placeholder = { Text(text = "HTML") }
-    )
-}
-
-@Composable
 fun Demo_DropDownMenu() {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -277,6 +288,6 @@ fun Demo_DropDownMenu() {
 //                    }
 //                }
 //                else -> {
-//                    Text(text = "Bitches ain't got cash")
+//                    Text(text = "Realest")
 //                }
 //            }

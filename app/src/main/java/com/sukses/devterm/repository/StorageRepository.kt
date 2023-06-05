@@ -79,6 +79,34 @@ class StorageRepository {
         }
     }
 
+    fun getTermByName(
+        txt: String
+    ): Flow<Resources<List<Terms>>> = callbackFlow {
+        var snapshotStateListener: ListenerRegistration? = null
+
+        try {
+            snapshotStateListener = termsRef
+                .whereEqualTo("title", txt)
+                .addSnapshotListener { snapshot, e ->
+                    val response = if (snapshot != null) {
+                        val terms = snapshot.toObjects(Terms::class.java)
+                        Resources.Success(data = terms)
+                    } else {
+                        Resources.Error(throwable = e?.cause)
+                    }
+                    trySend(response)
+                }
+
+        } catch (e: Exception) {
+            trySend(Resources.Error(e.cause))
+            e.printStackTrace()
+        }
+
+        awaitClose {
+            snapshotStateListener?.remove()
+        }
+    }
+
     fun getTerm(
         termId:String,
         onError:(Throwable?) -> Unit,

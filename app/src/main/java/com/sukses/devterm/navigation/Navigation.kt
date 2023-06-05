@@ -16,6 +16,7 @@ import com.sukses.devterm.view.login.LoginScreen
 import com.sukses.devterm.view.login.SignUpScreen
 import com.sukses.devterm.view.myterm.MyTermScreen
 import com.sukses.devterm.view.myterm.MyTermViewModel
+import com.sukses.devterm.view.searchresult.SearchResult
 
 enum class LoginRoutes {
     Signup,
@@ -26,7 +27,8 @@ enum class HomeRoutes {
     Home,
     AddTerm,
     MyTerm,
-    EditTerm
+    EditTerm,
+    SearchResult
 }
 
 enum class NestedRoutes {
@@ -157,6 +159,10 @@ fun NavGraphBuilder.homeGraph(
                 editTermViewModel = editTermViewModel,
                 termId = entry.arguments?.getString("id") as String,
             )
+        }
+        
+        composable(route = HomeRoutes.SearchResult.name) {
+            SearchResult(homeViewModel = homeViewModel)
         }
     }
 }
