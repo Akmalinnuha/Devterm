@@ -56,7 +56,7 @@ fun MyTermScreen(
         myTermViewModel?.loadMyTerms()
     }
     
-    Surface() {
+    Surface {
         Column(modifier = Modifier.padding(8.dp)) {
             Box(modifier = Modifier.padding(12.dp)) {
                 Text(text = "My Terms")

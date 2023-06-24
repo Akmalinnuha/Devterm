@@ -16,7 +16,11 @@ import com.sukses.devterm.view.login.LoginScreen
 import com.sukses.devterm.view.login.SignUpScreen
 import com.sukses.devterm.view.myterm.MyTermScreen
 import com.sukses.devterm.view.myterm.MyTermViewModel
+import com.sukses.devterm.view.searchresult.DetailScreen
 import com.sukses.devterm.view.searchresult.SearchResult
+import com.sukses.devterm.view.termcategory.CategoryListScreen
+import com.sukses.devterm.view.termcategory.CategoryScreen
+import com.sukses.devterm.view.termcategory.CategoryViewModel
 
 enum class LoginRoutes {
     Signup,
@@ -28,7 +32,10 @@ enum class HomeRoutes {
     AddTerm,
     MyTerm,
     EditTerm,
-    SearchResult
+    SearchResult,
+    Detail,
+    CategoryList,
+    Category
 }
 
 enum class NestedRoutes {
@@ -43,7 +50,8 @@ fun Navigation(
     addTermViewModel: AddTermViewModel,
     homeViewModel: HomeViewModel,
     myTermViewModel: MyTermViewModel,
-    editTermViewModel: EditTermViewModel
+    editTermViewModel: EditTermViewModel,
+    categoryViewModel: CategoryViewModel
 ) {
     NavHost(
         navController = navController,
@@ -55,7 +63,8 @@ fun Navigation(
             addTermViewModel,
             homeViewModel,
             myTermViewModel,
-            editTermViewModel
+            editTermViewModel,
+            categoryViewModel
         )
     }
 }
@@ -110,7 +119,8 @@ fun NavGraphBuilder.homeGraph(
     addTermViewModel: AddTermViewModel,
     homeViewModel: HomeViewModel,
     myTermViewModel: MyTermViewModel,
-    editTermViewModel: EditTermViewModel
+    editTermViewModel: EditTermViewModel,
+    categoryViewModel: CategoryViewModel
 ){
     navigation(
         startDestination = HomeRoutes.Home.name,
@@ -118,6 +128,11 @@ fun NavGraphBuilder.homeGraph(
     ){
         composable(HomeRoutes.Home.name){
             HomeScreen(
+                onItemClick = { termID->
+                    navController.navigate(HomeRoutes.Detail.name + "?id=$termID") {
+                        launchSingleTop = true
+                    }
+                },
                 navController = navController,
                 homeViewModel = homeViewModel
             ) {
@@ -162,7 +177,51 @@ fun NavGraphBuilder.homeGraph(
         }
         
         composable(route = HomeRoutes.SearchResult.name) {
-            SearchResult(homeViewModel = homeViewModel)
+            SearchResult(onItemClick = { termID->
+                navController.navigate(HomeRoutes.Detail.name + "?id=$termID") {
+                    launchSingleTop = true
+                }
+            }, homeViewModel = homeViewModel)
+        }
+
+        composable(
+            route = HomeRoutes.Detail.name + "?id={id}",
+            arguments = listOf(navArgument("id"){
+                type = NavType.StringType
+                defaultValue = ""
+            })
+        ){ entry ->
+            DetailScreen(
+                homeViewModel = homeViewModel,
+                termID = entry.arguments?.getString("id") as String,
+            )
+        }
+
+        composable(route = HomeRoutes.CategoryList.name) {
+            CategoryListScreen(
+                onCategoryClick = { catName->
+                    navController.navigate(HomeRoutes.Category.name + "?catName=$catName")
+                },
+                categoryViewModel = categoryViewModel
+            )
+        }
+
+        composable(
+            route = HomeRoutes.Category.name + "?catName={catName}",
+            arguments = listOf(navArgument("catName"){
+                type = NavType.StringType
+                defaultValue = "Mobile Development"
+            })
+        ) { entry ->
+            CategoryScreen(
+                onItemClick = { termID->
+                    navController.navigate(HomeRoutes.Detail.name + "?id=$termID") {
+                        launchSingleTop = true
+                    }
+                },
+                categoryViewModel = categoryViewModel,
+                CategoryName = entry.arguments?.getString("catName") as String
+            )
         }
     }
 }

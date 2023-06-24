@@ -4,6 +4,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.channels.awaitClose
@@ -29,7 +30,7 @@ class StorageRepository {
 
         try {
             snapshotStateListener = termsRef
-                .orderBy("timestamp")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .whereEqualTo("userId", userId)
                 .addSnapshotListener { snapshot, e ->
                     val response = if (snapshot != null) {
@@ -56,7 +57,7 @@ class StorageRepository {
 
         try {
             snapshotStateListener = termsRef
-                .orderBy("timestamp")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, e ->
                     val response = if (snapshot != null) {
                         val terms = snapshot.toObjects(Terms::class.java)
@@ -77,14 +78,13 @@ class StorageRepository {
         }
     }
 
-    fun getTermByName(
-        txt: String
-    ): Flow<Resources<List<Terms>>> = callbackFlow {
+    fun getTermByCategory(category: String) : Flow<Resources<List<Terms>>> = callbackFlow {
         var snapshotStateListener: ListenerRegistration? = null
 
         try {
             snapshotStateListener = termsRef
-                .whereEqualTo("title", txt)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .whereEqualTo("category", category)
                 .addSnapshotListener { snapshot, e ->
                     val response = if (snapshot != null) {
                         val terms = snapshot.toObjects(Terms::class.java)

@@ -1,32 +1,24 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.sukses.devterm.view.home
 
-import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -46,9 +37,12 @@ import com.google.firebase.Timestamp
 import com.sukses.devterm.model.Terms
 import com.sukses.devterm.navigation.HomeRoutes
 import com.sukses.devterm.repository.Resources
+import com.sukses.devterm.view.searchresult.TermSr
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onItemClick :(Any) -> Unit,
     navController: NavController,
     homeViewModel: HomeViewModel?,
     navToLoginPage: () -> Unit
@@ -79,7 +73,7 @@ fun HomeScreen(
     Surface {
         Column {
             Row {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
                     if (textSearch != null) {
                         OutlinedTextField(
                             value = textSearch,
@@ -101,11 +95,12 @@ fun HomeScreen(
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                             label = { Text(text = "Keyword") },
+                            shape = RoundedCornerShape(percent = 20),
                             placeholder = { Text(text = "HTML") }
                         )
                     }
                 }
-                val context = LocalContext.current
+//                val context = LocalContext.current
                 var expanded by remember { mutableStateOf(false) }
 
                 Box(
@@ -114,7 +109,7 @@ fun HomeScreen(
                     Alignment.TopEnd
                 ) {
                     IconButton(
-                        modifier = Modifier.padding(top = 5.dp),
+                        modifier = Modifier.padding(top = 12.dp),
                         onClick = { expanded = !expanded }
                     ) {
                         Icon(
@@ -129,7 +124,7 @@ fun HomeScreen(
                         onDismissRequest = { expanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("My terms") },
+                            text = { Text("My Terms") },
                             onClick = { navController.navigate(route = HomeRoutes.MyTerm.name) }
                         )
                         DropdownMenuItem(
@@ -138,15 +133,7 @@ fun HomeScreen(
                         )
                         DropdownMenuItem(
                             text = { Text("View Categories") },
-                            onClick = { Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show() }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Profile page") },
-                            onClick = { Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show() }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("About us") },
-                            onClick = { Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show() }
+                            onClick = { navController.navigate(route = HomeRoutes.CategoryList.name) }
                         )
                         DropdownMenuItem(
                             text = { Text("Sign Out") },
@@ -163,70 +150,50 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(6.dp)
             ) {
-                items (aka) {term ->
-                    TermCard(
+                items (items = aka.take(10)) {term ->
+                    TermSr(
                         name = term.title,
                         category = term.category,
                         description = term.description
-                    )
+                    ) {
+                        onItemClick.invoke(term.documentId)
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-fun TermCard(name: String, category: String, description: String) {
-    Card(
-        modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth()
-            .height(155.dp)
-            .background(color = MaterialTheme.colorScheme.surface),
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 5.dp
-        )
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(Modifier.padding(5.dp)) {
-                Text(
-                    text = name,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Text(text = "~$category", style = MaterialTheme.typography.labelLarge)
-                Spacer(modifier = Modifier.padding(vertical = 8.dp))
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        }
-    }
-}
-
-//            when (homeUiState.termsList) {
-//                is Resources.Loading -> {
-//                    CircularProgressIndicator(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .wrapContentSize(align = Alignment.Center)
-//                    )
-//                }
-//                is Resources.Success -> {
-//                    LazyColumn(
-//                        modifier = Modifier.fillMaxWidth(),
-//                        contentPadding = PaddingValues(16.dp)
-//                    ) {
-//                        items(homeUiState.termsList.data ?: emptyList()) {term ->
-//                            TermCard(name = term.title, category = term.category, description = term.description)
-//                        }
-//                    }
-//                }
-//                else -> {
-//                    Text(text = "Realest")
-//                }
+//@Composable
+//fun TermCard(name: String, category: String, description: String) {
+//    Card(
+//        modifier = Modifier
+//            .padding(10.dp)
+//            .fillMaxWidth()
+//            .height(155.dp)
+//            .background(color = MaterialTheme.colorScheme.surface),
+//        shape = MaterialTheme.shapes.medium,
+//        elevation = CardDefaults.cardElevation(
+//            defaultElevation = 5.dp
+//        )
+//    ) {
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//        ) {
+//            Column(Modifier.padding(5.dp)) {
+//                Text(
+//                    text = name,
+//                    style = MaterialTheme.typography.titleLarge,
+//                    color = MaterialTheme.colorScheme.onSurface,
+//                )
+//                Text(text = "~$category", style = MaterialTheme.typography.labelLarge)
+//                Spacer(modifier = Modifier.padding(vertical = 8.dp))
+//                Text(
+//                    text = description,
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    textAlign = TextAlign.Justify
+//                )
 //            }
+//        }
+//    }
+//}

@@ -6,16 +6,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.sukses.devterm.model.Terms
 import com.sukses.devterm.repository.StorageRepository
-import com.sukses.devterm.view.addterm.AddTermUiState
 
 class EditTermViewModel(
     private val repository: StorageRepository = StorageRepository()
 ) : ViewModel() {
     var editTermUiState by mutableStateOf(EditTermUiState())
         private set
-
-    private val hasUser: Boolean
-        get() = repository.hasUser()
 
     fun onTitleChange(title: String) {
         editTermUiState = editTermUiState.copy(title = title)
@@ -42,7 +38,7 @@ class EditTermViewModel(
         }
     }
 
-    fun setEditFields(term: Terms){
+    private fun setEditFields(term: Terms){
         editTermUiState = editTermUiState.copy(
             title = term.title,
             category = term.category,

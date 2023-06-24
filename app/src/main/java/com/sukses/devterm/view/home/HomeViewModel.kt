@@ -16,7 +16,7 @@ class HomeViewModel(
     var homeUiState by mutableStateOf(HomeUiState())
         private set
 
-    var searchResultState by mutableStateOf(SearchResultState())
+    var detailState by mutableStateOf(DetailState())
         private set
 
     var searchText by mutableStateOf("")
@@ -26,8 +26,13 @@ class HomeViewModel(
         getAllTerms()
     }
 
-    fun loadSearch() {
-        getTermName()
+    fun getTerm(termId:String) {
+        repository.getTerm(
+            termId = termId,
+            onError = {},
+        ) { Term->
+            detailState = detailState.copy(detailTerms = Term)
+        }
     }
 
     fun onSearchChange(search: String) {
@@ -44,12 +49,6 @@ class HomeViewModel(
         }
     }
 
-    private fun getTermName() = viewModelScope.launch {
-        repository.getTermByName(searchText).collect {
-            searchResultState = searchResultState.copy(searchTerms = it)
-        }
-    }
-
     fun signOut() = repository.signOut()
 }
 
@@ -57,6 +56,6 @@ data class HomeUiState(
     val termsList: Resources<List<Terms>> = Resources.Loading()
 )
 
-data class SearchResultState(
-    val searchTerms: Resources<List<Terms>> = Resources.Loading()
+data class DetailState(
+    val detailTerms: Terms? = null
 )
